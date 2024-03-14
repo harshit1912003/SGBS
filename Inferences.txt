@@ -1,0 +1,36 @@
+BEST CASE : K=5 T=0.5 Alpha = 0.3
+CASE 1 : K=3 T=0.5 Alpha = 0.9 NewSigma = 1 (better back ground substraction but noise in foreground)
+CASE 2 : K=3 T=0.9 Alpha = 0.9 NewSigma = 1 (better back ground substraction but noise in foreground)\
+CASE 3 : K=3 T=0.9 Alpha = 0.3 NewSigma = 1 (better back ground substraction)(better foreground) close to BEST case
+CASE 4 : K=3 T=0.7 Alpha = 0.1 NewSigma = 1(not so good back ground substraction and foreground)
+CASE 5 : K=5 T=0.7 Alpha = 0.3 NewSigma = 10 NewWeight = 0.05(no back ground substraction)
+CASE 6 : K=3 T=0.5 Alpha = 0.3 NewSigma = 10 NewWeight = 0.05(no back ground substraction)
+
+
+
+
+
+Procedure:
+1. RGB frame is converted to gray so as to fit 1D gaussian
+2. Means are randomly initialized with values taken from frames at different intervals of video
+3. Sigmas values are less due to the fact that background values tend to have less variance and same was observed while looking at the gray pixel values for frames
+4. Values of a particular pixel location for all frames is modelled as a mixture of adaptive guassians.
+5. Variation in values of a particular pixel over time gives rise to different scenarios which fits different guassians.
+6. Not much variation in lighting conditions in the video
+7. pixel at time t is modelled as P(Xt) = summation from 1 to no of gaussians * priors * N(X(t-1) |mu , sigma )
+8. Each pixel value is within 2.5*sigma of the ditribution then its a match
+9. We update the mean,sigma and weights accordingly
+10. If no match is there we replace the least probable(least (weight/sigma) value) distribution with a new distribution
+11. Distributions are then ordered in descending order of (weight/sigma) and first B guassians whose cumulative value is > T are considered as background gaussians 
+12.if a pixel matches first B gaussians then its considered as background else its considered as foreground.
+
+
+Learning/Inferences:
+1. Initialization of means was the biggest problem and the performance of the algorithm is directly proportional with the mean initialization
+2. The algorithm is time consuming
+3. If K is large the algorithm adapts better to the changes but time increases 
+4. greater is the T greater is the proportion of the background
+5. Alpha value should be a bit large so as to separate the matching gaussians from the unmatched ones.
+
+
+
